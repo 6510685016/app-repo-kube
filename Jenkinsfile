@@ -88,7 +88,7 @@ pipeline {
                 --set image.repository=${NEXUS_REGISTRY}/${NEXUS_REPO}/${BACKEND_IMAGE} \
                 --set image.tag=${TAG} \
                 --wait \
-                --timeout 2m
+                --timeout 6m
 
                 echo "✅ Helm deploy finished"
                 '''
