@@ -8,7 +8,7 @@ image:
 service:
   type: NodePort
   port: 8080
-  nodePort: 8765
+  nodePort: 30000
 
 containerPort: 8080
 
