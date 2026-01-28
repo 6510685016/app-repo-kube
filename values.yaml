@@ -1,0 +1,33 @@
+replicaCount: 2
+
+image:
+  repository: 192.168.11.128:8082/docker-hosted/gitops-backend
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8080
+  nodePort: 8765
+
+containerPort: 8080
+
+resources:
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+readinessProbe:
+  path: /actuator/health
+  port: 8080
+
+livenessProbe:
+  path: /actuator/health
+  port: 8080
+
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 0
