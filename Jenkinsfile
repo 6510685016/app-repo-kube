@@ -66,26 +66,44 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
+            environment {
+                KUBECONFIG = '/kubeconfig'
+            }
             steps {
                 sh '''
+                set -e
+
+                echo "🚀 Deploy Spring Boot Backend"
+
+                kubectl get nodes
+
                 helm upgrade --install ${HELM_RELEASE} ${HELM_CHART} \
-                  --namespace ${K8S_NAMESPACE} \
-                  --set image.repository=${NEXUS_REGISTRY}/${NEXUS_REPO}/${BACKEND_IMAGE} \
-                  --set image.tag=${TAG} \
-                  --wait \
-                  --timeout 2m
+                --namespace ${K8S_NAMESPACE} \
+                --set image.repository=${NEXUS_REGISTRY}/${NEXUS_REPO}/${BACKEND_IMAGE} \
+                --set image.tag=${TAG} \
+                --wait \
+                --timeout 2m
                 '''
             }
         }
 
+
         stage('Verify') {
+            environment {
+                KUBECONFIG = '/kubeconfig'
+            }
             steps {
                 sh '''
+                set -e
+
+                echo "🔎 Verifying rollout..."
+
                 kubectl rollout status deployment/${HELM_RELEASE} \
-                  -n ${K8S_NAMESPACE} --timeout=120s
+                -n ${K8S_NAMESPACE} --timeout=120s
                 '''
             }
         }
+
     }
 
     post {
