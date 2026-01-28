@@ -6,7 +6,7 @@ pipeline {
 
         NEXUS_REGISTRY = "192.168.11.128:8082"
         NEXUS_REPO     = "docker-hosted"
-        BACKEND_IMAGE  = "gitops-backend"
+        BACKEND_IMAGE  = "kube-gitops-backend"
 
         HELM_RELEASE   = "gitops-backend"
         HELM_CHART     = "helm/gitops-backend"
