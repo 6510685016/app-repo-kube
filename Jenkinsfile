@@ -21,28 +21,28 @@ pipeline {
 
     stages {
 
-        // stage('SonarQube Scan') {
-        //     steps {
-        //         withSonarQubeEnv('sonarqube') {
-        //             sh '''
-        //             cd backend
-        //             chmod +x mvnw
-        //             ./mvnw clean verify sonar:sonar \
-        //               -Dsonar.projectKey=kube-gitops-backend \
-        //               -Dsonar.host.url=http://192.168.11.128:9000 \
-        //               -Dsonar.login=$SONAR_AUTH_TOKEN
-        //             '''
-        //         }
-        //     }
-        // }
+        stage('SonarQube Scan') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh '''
+                    cd backend
+                    chmod +x mvnw
+                    ./mvnw clean verify sonar:sonar \
+                      -Dsonar.projectKey=kube-gitops-backend \
+                      -Dsonar.host.url=http://192.168.11.128:9000 \
+                      -Dsonar.login=$SONAR_AUTH_TOKEN
+                    '''
+                }
+            }
+        }
 
-        // stage('Quality Gate') {
-        //     steps {
-        //         timeout(time: 2, unit: 'MINUTES') {
-        //             waitForQualityGate abortPipeline: true
-        //         }
-        //     }
-        // }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
 
         stage('Build & Push Docker Image') {
             steps {
@@ -75,14 +75,14 @@ pipeline {
 
                 echo "🚀 Deploy Spring Boot Backend to Kubernetes"
 
-                # ตรวจ cluster
+                # show nodes
                 kubectl get nodes
 
-                # สร้าง namespace ถ้ายังไม่มี
+                # create namespace if not exists
                 kubectl get namespace ${K8S_NAMESPACE} >/dev/null 2>&1 || \
                 kubectl create namespace ${K8S_NAMESPACE}
 
-                # Deploy ด้วย Helm (install หรือ upgrade)
+                # install or upgrade helm chart
                 helm upgrade --install ${HELM_RELEASE} ${HELM_CHART} \
                 --namespace ${K8S_NAMESPACE} \
                 --set image.repository=${NEXUS_REGISTRY}/${NEXUS_REPO}/${BACKEND_IMAGE} \
@@ -101,37 +101,49 @@ pipeline {
                 KUBECONFIG = '/kubeconfig'
             }
             steps {
-                sh '''
-                set -e
+                script {
+                    try {
+                        sh '''
+                        echo "🩺 Wait for Spring Boot healthcheck..."
 
-                echo "🔎 Verifying rollout status..."
+                        sleep 15
 
-                # ตรวจว่า deployment ถูกสร้างจริง
-                if ! kubectl get deployment ${HELM_RELEASE} -n ${K8S_NAMESPACE} >/dev/null 2>&1; then
-                echo "❌ Deployment ${HELM_RELEASE} not found"
-                exit 1
-                fi
+                        for i in $(seq 1 10); do
+                          echo "Healthcheck attempt $i..."
 
-                # รอ rollout
-                kubectl rollout status deployment/${HELM_RELEASE} \
-                -n ${K8S_NAMESPACE} \
-                --timeout=120s
+                          if curl -f http://192.168.11.128:30000/actuator/health; then
+                            echo "✅ Healthcheck passed"
+                            exit 0
+                          fi
 
-                echo "✅ Rollout successful"
-                '''
+                          sleep 5
+                        done
+
+                        echo "❌ Healthcheck failed"
+                        exit 1
+                        '''
+                    }
+                }
             }
         }
 
     }
 
     post {
+        // fail = rollback
+        environment {
+            KUBECONFIG = '/kubeconfig'
+        }
         failure {
             echo "❌ Deploy failed → Helm rollback"
             sh 'helm rollback ${HELM_RELEASE} || true'
         }
 
+        // success = ดีใจ เย่
         success {
             echo "✅ Deployment success on Kubernetes"
         }
     }
 }
+
+//✅❌
