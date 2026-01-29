@@ -136,19 +136,18 @@ pipeline {
             }
         }
 
-    }
+        post {
+            // fail = rollback
+            failure {
+                echo "❌ Deploy failed → Helm rollback"
+                export KUBECONFIG=/kubeconfig
+                sh 'helm rollback ${HELM_RELEASE} || true'
+            }
 
-    post {
-        // fail = rollback
-        failure {
-            echo "❌ Deploy failed → Helm rollback"
-            export KUBECONFIG=/kubeconfig
-            sh 'helm rollback ${HELM_RELEASE} || true'
-        }
-
-        // success = ดีใจ เย่
-        success {
-            echo "✅ Deployment success on Kubernetes"
+            // success = ดีใจ เย่
+            success {
+                echo "✅ Deployment success on Kubernetes"
+            }
         }
     }
 }
