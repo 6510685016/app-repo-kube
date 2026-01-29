@@ -140,11 +140,9 @@ pipeline {
 
     post {
         // fail = rollback
-        environment {
-            KUBECONFIG = '/kubeconfig'
-        }
         failure {
             echo "❌ Deploy failed → Helm rollback"
+            export KUBECONFIG=/kubeconfig
             sh 'helm rollback ${HELM_RELEASE} || true'
         }
 
