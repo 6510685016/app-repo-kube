@@ -122,6 +122,15 @@ pipeline {
                         echo "❌ Healthcheck failed"
                         exit 1
                         '''
+                    } catch (err) {
+                        echo "❌ Deploy failed → Rollback"
+
+                        sh '''
+                        docker service rollback gitops-backend || true
+                        '''
+
+                        currentBuild.result = 'FAILURE'
+                        throw err
                     }
                 }
             }
