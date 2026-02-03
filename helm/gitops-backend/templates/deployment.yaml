@@ -17,6 +17,8 @@ spec:
       labels:
         app: gitops-backend
     spec:
+      nodeSelector:
+          node-role.kubernetes.io/worker: worker
       containers:
         - name: backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -29,5 +31,3 @@ spec:
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 5
-      nodeSelector:
-        node-role.kubernetes.io/worker: worker
