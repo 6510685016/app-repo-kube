@@ -24,10 +24,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 8080
+            - containerPort: 30000
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: 30000
             initialDelaySeconds: 10
             periodSeconds: 5

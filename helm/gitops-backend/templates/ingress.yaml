@@ -15,4 +15,4 @@ spec:
               service:
                 name: gitops-backend
                 port:
-                  number: 8080
+                  number: 30000
