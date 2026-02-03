@@ -29,3 +29,5 @@ spec:
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 5
+      nodeSelector:
+        node-role.kubernetes.io/worker: worker

@@ -12,6 +12,9 @@ service:
 
 containerPort: 8080
 
+nodeSelector:
+  node-role.kubernetes.io/worker: worker
+
 resources:
   requests:
     cpu: "200m"
