@@ -9,26 +9,27 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
       maxSurge: {{ .Values.rollingUpdate.maxSurge }}
-  selector:
-    matchLabels:
-      app: {{ .Chart.Name }}
+      maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
   template:
-    metadata:
-      labels:
-        app: {{ .Chart.Name }}
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - gitops-backend
+            topologyKey: "kubernetes.io/hostname"
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
       containers:
         - name: backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.containerPort }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: {{ .Values.readinessProbe.path }}
