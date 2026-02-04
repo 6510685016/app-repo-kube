@@ -1,31 +1,19 @@
-replicaCount: 2
+replicaCount: 1
 
 image:
   repository: 192.168.11.128:8082/docker-hosted/gitops-backend
-  tag: "latest"
+  tag: latest
   pullPolicy: IfNotPresent
 
-containerPort: 8080
-
-nodeSelector:
-  node-role.kubernetes.io/worker: worker
-
-resources:
-  requests:
-    cpu: "200m"
-    memory: "256Mi"
-  limits:
-    cpu: "500m"
-    memory: "512Mi"
-
-readinessProbe:
-  path: /actuator/health
+service:
+  type: ClusterIP
   port: 8080
 
-livenessProbe:
-  path: /actuator/health
-  port: 8080
+ingress:
+  enabled: true
+  className: nginx
+  host: backend.local
+  path: /
+  pathType: Prefix
 
-rollingUpdate:
-  maxSurge: 1
-  maxUnavailable: 0
+resources: {}
