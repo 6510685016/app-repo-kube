@@ -1,33 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gitops-backend
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
+      maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .Values.rollingUpdate.maxSurge }}
   selector:
     matchLabels:
-      app: gitops-backend
+      app: {{ .Chart.Name }}
   template:
     metadata:
       labels:
-        app: gitops-backend
+        app: {{ .Chart.Name }}
     spec:
       nodeSelector:
-          node-role.kubernetes.io/worker: worker
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
       containers:
         - name: backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 30000
+            - containerPort: {{ .Values.containerPort }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           readinessProbe:
             httpGet:
-              path: /actuator/health
-              port: 30000
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.readinessProbe.port }}
             initialDelaySeconds: 10
             periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.livenessProbe.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
