@@ -6,12 +6,18 @@ metadata:
     app: {{ .Chart.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: {{ .Values.rollingUpdate.maxSurge }}
       maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
   template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
     spec:
       affinity:
         podAntiAffinity:
@@ -21,7 +27,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                - gitops-backend
+                - {{ .Chart.Name }} # เปลี่ยนให้ตรงกับ labels ด้านบน
             topologyKey: "kubernetes.io/hostname"
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
@@ -30,6 +36,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
             - containerPort: {{ .Values.containerPort }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: {{ .Values.readinessProbe.path }}
