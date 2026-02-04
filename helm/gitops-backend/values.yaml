@@ -6,14 +6,6 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 8765
-
-ingress:
-  enabled: true
-  className: nginx
-  host: backend.local
-  path: /
-  pathType: Prefix
-
-resources: {}
+  nodePort: 30080
