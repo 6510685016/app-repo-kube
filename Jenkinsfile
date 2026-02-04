@@ -146,6 +146,14 @@ pipeline {
                     }
                 }
             }
+            post {
+                failure {
+                    echo "🔄 Helm rollback due to deploy failure"
+                    sh '''
+                    helm rollback ${HELM_RELEASE} || true
+                    '''
+                }
+            }
         }
     }
 }
