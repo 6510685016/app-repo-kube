@@ -5,7 +5,7 @@ image:
   tag: "latest"
   pullPolicy: IfNotPresent
 
-containerPort: 30000
+containerPort: 8080
 
 nodeSelector:
   node-role.kubernetes.io/worker: worker
@@ -20,11 +20,11 @@ resources:
 
 readinessProbe:
   path: /actuator/health
-  port: 30000
+  port: 8080
 
 livenessProbe:
   path: /actuator/health
-  port: 30000
+  port: 8080
 
 rollingUpdate:
   maxSurge: 1
