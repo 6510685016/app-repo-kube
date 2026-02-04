@@ -16,4 +16,4 @@ spec:
               service:
                 name: gitops-backend
                 port:
-                  name: http
+                  number: 30000

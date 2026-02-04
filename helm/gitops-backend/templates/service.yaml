@@ -8,5 +8,5 @@ spec:
     app: gitops-backend
   ports:
     - name: http
-      port: 80
+      port: 30000
       targetPort: 30000
