@@ -82,6 +82,8 @@ pipeline {
                 kubectl get namespace ${K8S_NAMESPACE} >/dev/null 2>&1 || \
                 kubectl create namespace ${K8S_NAMESPACE}
 
+                helm install --debug --dry-run my-release .
+
                 # install or upgrade helm chart
                 helm upgrade --install ${HELM_RELEASE} ${HELM_CHART} \
                 --namespace ${K8S_NAMESPACE} \
@@ -89,6 +91,10 @@ pipeline {
                 --set image.tag=${TAG} \
                 --wait \
                 --timeout 10m
+
+                kubectl get endpoints gitops-backend
+                kubectl describe ing gitops-backend
+                kubectl get pods -o wide
 
                 echo "✅ Helm deploy finished"
                 '''
