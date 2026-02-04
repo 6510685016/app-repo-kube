@@ -9,5 +9,4 @@ spec:
   ports:
     - name: http
       port: 30000
-      targetPort: 30000    
-      nodePort: {{ .Values.service.nodePort }}  
+      targetPort: 30000
