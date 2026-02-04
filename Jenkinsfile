@@ -113,17 +113,38 @@ pipeline {
                 KUBECONFIG = '/kubeconfig'
             }
             steps {
-                sh '''
-                set -e
-                echo "🩺 Verify via ClusterIP inside cluster"
+                script {
+                    try {
+                        sh '''
+                        echo "🩺 Wait for Spring Boot healthcheck..."
 
-                kubectl run verify --rm -it \
-                --image=curlimages/curl \
-                --restart=Never \
-                -- curl -f http://gitops-backend:8765/actuator/health
+                        sleep 15
 
-                echo "✅ Healthcheck passed (ClusterIP)"
-                '''
+                        for i in $(seq 1 10); do
+                          echo "Healthcheck attempt $i..."
+
+                          if curl -f http://192.168.11.129:30080/actuator/health; then
+                            echo "✅ Healthcheck VM2 passed"
+                            
+                            if curl -f http://192.168.11.130:30080/actuator/health; then
+                                echo "✅ Healthcheck VM3 passed"
+                                exit 0
+                            fi
+                          fi
+
+                          sleep 5
+                        done
+
+                        echo "❌ Healthcheck failed"
+                        exit 1
+                        '''
+                    } catch (err) {
+                        echo "❌ Deploy failed → Rollback"
+
+                        currentBuild.result = 'FAILURE'
+                        throw err
+                    }
+                }
             }
         }
     }
