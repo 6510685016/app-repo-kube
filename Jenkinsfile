@@ -91,7 +91,7 @@ pipeline {
                 --timeout 10m
 
                 kubectl get endpoints gitops-backend
-                kubectl describe ing gitops-backend
+                kubectl get svc
                 kubectl get pods -o wide
 
                 echo "✅ Helm deploy finished"
