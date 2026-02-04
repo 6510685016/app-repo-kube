@@ -17,6 +17,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: gitops-backend.default.svc.cluster.local
+                name: gitops-backend
                 port:
                   number: 80
