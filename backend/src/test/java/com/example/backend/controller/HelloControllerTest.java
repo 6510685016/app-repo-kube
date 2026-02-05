@@ -2,16 +2,16 @@ package com.example.backend.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.example.backend.controller.HelloController;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(HelloController.class) // ทดสอบเฉพาะ Controller ตัวนี้
+@SpringBootTest
+@AutoConfiguration 
 class HelloControllerTest {
 
     @Autowired
