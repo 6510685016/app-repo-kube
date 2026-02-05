@@ -132,7 +132,7 @@ pipeline {
                                     if curl -f http://192.168.11.130:30080/actuator/health; then
                                         echo "✅ Healthcheck VM3 passed"
                                         
-                                        if curl -f http://192.168.11.128:33333/actuator/health; then
+                                        if curl -f http://192.168.11.128:32000/actuator/health; then
                                             echo "✅ Healthcheck Load balancer passed"
                                             exit 0
                                         fi
