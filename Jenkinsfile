@@ -124,18 +124,22 @@ pipeline {
                         sleep 15
 
                         for i in $(seq 1 10); do
-                          echo "Healthcheck attempt $i..."
+                            echo "Healthcheck attempt $i..."
 
-                          if curl -f http://192.168.11.129:30080/actuator/health; then
-                            echo "✅ Healthcheck VM2 passed"
-                            
-                            if curl -f http://192.168.11.130:30080/actuator/health; then
-                                echo "✅ Healthcheck VM3 passed"
-                                exit 0
-                            fi
-                          fi
+                                if curl -f http://192.168.11.129:30080/actuator/health; then
+                                    echo "✅ Healthcheck VM2 passed"
+                                    
+                                    if curl -f http://192.168.11.130:30080/actuator/health; then
+                                        echo "✅ Healthcheck VM3 passed"
+                                        
+                                        if curl -f http://192.168.11.128:33333/actuator/health; then
+                                            echo "✅ Healthcheck Load balancer passed"
+                                            exit 0
+                                        fi
+                                    fi
+                                fi
 
-                          sleep 5
+                            sleep 5
                         done
 
                         echo "❌ Healthcheck failed"
