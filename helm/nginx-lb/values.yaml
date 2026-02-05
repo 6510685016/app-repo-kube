@@ -14,7 +14,7 @@ backend:
 service:
   type: NodePort
   port: 80
-  nodePort: 80
+  nodePort: 33333
 
 logging:
   hostPath: /var/log/nginx-lb
