@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
 spec:
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: ""
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
