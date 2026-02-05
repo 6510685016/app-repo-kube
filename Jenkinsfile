@@ -30,7 +30,8 @@ pipeline {
                     ./mvnw clean verify sonar:sonar \
                       -Dsonar.projectKey=kube-gitops-backend \
                       -Dsonar.host.url=http://192.168.11.128:9000 \
-                      -Dsonar.login=$SONAR_AUTH_TOKEN
+                      -Dsonar.login=$SONAR_AUTH_TOKEN\
+                      -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                     '''
                 }
             }

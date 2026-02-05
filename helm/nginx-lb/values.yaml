@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: latest
+  pullPolicy: IfNotPresent
+
+backend:
+  port: 30080
+  nodes:
+    - 192.168.11.129
+    - 192.168.11.130
+
+service:
+  type: NodePort
+  port: 80
+  nodePort: 80
+
+logging:
+  hostPath: /var/log/nginx-lb
