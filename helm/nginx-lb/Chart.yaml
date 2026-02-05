@@ -1,5 +1,5 @@
 apiVersion: v2
-name: gitops-backend
+name: nginx-lb-service
 description: A Helm chart for Nginx Load Balancer to Spring Boot Backend
 type: application
 
