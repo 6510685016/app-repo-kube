@@ -91,8 +91,6 @@ pipeline {
                 --wait \
                 --timeout 10m
 
-                helm upgrade --install nginx-lb ./helm/nginx-lb
-
                 kubectl get endpoints gitops-backend
                 kubectl get svc
                 kubectl get pods -o wide
