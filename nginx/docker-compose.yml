@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  nginx-lb:
+    image: 192.168.11.128:8082/docker-hosted/nginx:1.25
+    container_name: nginx-external-lb
+    ports:
+      - "32000:80" # แมป Port 32000 ของเครื่อง Host เข้ากับ Port 80 ของ Nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./logs:/var/log/nginx
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
