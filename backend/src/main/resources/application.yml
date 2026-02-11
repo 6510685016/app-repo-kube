@@ -1,5 +1,14 @@
+spring:
+  application:
+    name: backend
+
 server:
   port: 8765
+  tomcat:
+    threads:
+      max: 200
+    max-connections: 10000
+    accept-count: 100
 
 management:
   endpoints:
@@ -10,8 +19,3 @@ management:
     health:
       probes:
         enabled: true
-  health:
-    livenessstate:
-      enabled: true
-    readinessstate:
-      enabled: true
