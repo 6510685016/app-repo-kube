@@ -1,8 +1,0 @@
-apiVersion: v2
-name: nginx-lb-service
-description: A Helm chart for Nginx Load Balancer to Spring Boot Backend
-type: application
-
-version: 0.1.0
-
-appVersion: "1.25.0"
