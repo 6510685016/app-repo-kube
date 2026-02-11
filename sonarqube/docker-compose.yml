@@ -1,0 +1,29 @@
+services:
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    restart: unless-stopped
+
+  nexus:
+    image: sonatype/nexus3:3.68.1
+    container_name: nexus
+    ports:
+      - "8081:8081"   # Web UI
+      - "8082:8082"   # Docker registry (custom)
+    volumes:
+      - nexus_data:/nexus-data
+    restart: unless-stopped
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  nexus_data:
