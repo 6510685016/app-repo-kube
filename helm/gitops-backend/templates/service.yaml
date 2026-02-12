@@ -4,6 +4,7 @@ metadata:
   name: {{ .Chart.Name }}
 spec:
   type: {{ .Values.service.type }}
+  externalTrafficPolicy: Local
   selector:
     app: {{ .Chart.Name }}
   ports:
@@ -11,3 +12,13 @@ spec:
       targetPort: {{ .Values.service.port }}
       nodePort: {{ .Values.service.nodePort }}
       protocol: TCP
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - {{ .Chart.Name }}
+        topologyKey: "kubernetes.io/hostname"
