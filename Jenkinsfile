@@ -21,17 +21,23 @@ pipeline {
 
     stages {
 
-        stage('SonarQube Scan') {
+        stage('SonarQube & Dependency Scan') {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     sh '''
                     cd backend
                     chmod +x mvnw
-                    ./mvnw clean verify sonar:sonar \
-                      -Dsonar.projectKey=kube-gitops-backend \
-                      -Dsonar.host.url=http://192.168.11.128:9000 \
-                      -Dsonar.login=$SONAR_AUTH_TOKEN\
-                      -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                    
+                    # 1. รันทั้ง Test, Dependency Check และ Sonar Scan ในคำสั่งเดียว
+                    ./mvnw clean verify \
+                        org.owasp:dependency-check-maven:check \
+                        sonar:sonar \
+                        -Dsonar.projectKey=kube-gitops-backend \
+                        -Dsonar.host.url=http://192.168.11.128:9000 \
+                        -Dsonar.login=$SONAR_AUTH_TOKEN \
+                        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+                        -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json \
+                        -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html
                     '''
                 }
             }

@@ -12,13 +12,3 @@ spec:
       targetPort: {{ .Values.service.port }}
       nodePort: {{ .Values.service.nodePort }}
       protocol: TCP
-  affinity:
-    podAntiAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchExpressions:
-          - key: app
-            operator: In
-            values:
-            - {{ .Chart.Name }}
-        topologyKey: "kubernetes.io/hostname"
