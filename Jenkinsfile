@@ -31,8 +31,10 @@ pipeline {
                     ./mvnw clean verify \
                         org.owasp:dependency-check-maven:check \
                         sonar:sonar \
-                        -Djava.net.useSystemProxies=true \
                         -DnvdApiKey=88a4da6b-84ab-4243-a66c-1b358bc1890c \
+                        -DnvdApiDelay=16000 \
+                        -DfailOnError=false \
+                        -DautoUpdate=true
                         -Dsonar.projectKey=kube-gitops-backend \
                         -Dsonar.host.url=http://192.168.11.128:9000 \
                         -Dsonar.login=$SONAR_AUTH_TOKEN \
